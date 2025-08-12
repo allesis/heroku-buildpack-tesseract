@@ -17,7 +17,7 @@ The first step consists in allowing your Heroku app to use multiple buildpacks. 
 3. deploy :)
 
 ## Note
-This fork upgrades the Tesseract binary version from 3.04.01 to 4.0
+This fork upgrades the Tesseract binary version from 4.0 to 5.5.1
 
 ## License
 MIT License.
