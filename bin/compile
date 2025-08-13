@@ -4,19 +4,18 @@ indent() {
   sed -u 's/^/       /'
 }
 
-BUILD_DIR=$1
+APP_DIR="/app"
 TESSERACT_OCR_VERSION=5.5.1
 TESSERACT_OCR_TGZ=tesseract-ocr-$TESSERACT_OCR_VERSION.tar.gz
 
-INSTALL_DIR=$BUILD_DIR/vendor/tesseract-ocr/
-TESSERACT_OCR_DIR=${HOME}/vendor/tesseract-ocr
-ENVSCRIPT=$BUILD_DIR/.profile.d/tesseract-ocr.sh
+TESSERACT_OCR_DIR=$APP_DIR/vendor/tesseract-ocr
+ENVSCRIPT=$APP_DIR/.profile.d/tesseract-ocr.sh
 
 TESSERACT_OCR_LANGUAGES=eng
 
 echo "-----> Unpacking Tesseract-OCR binaries"
-mkdir -p $INSTALL_DIR
-tar -zxvf $TESSERACT_OCR_TGZ -C $INSTALL_DIR | indent
+mkdir -p $TESSERACT_OCR_DIR
+tar -zxvf $TESSERACT_OCR_TGZ -C $TESSERACT_OCR_DIR | indent
 
 echo "-----> Building runtime environment for Tesseract-OCR"
 mkdir -p $BUILD_DIR/.profile.d
