@@ -1,4 +1,9 @@
 #!/bin/bash
+
+indent() {
+  sed -u 's/^/       /'
+}
+
 BUILD_DIR=$1
 TESSERACT_OCR_VERSION=5.5.1
 TESSERACT_OCR_TGZ=tesseract-ocr-$TESSERACT_OCR_VERSION.tar.gz
@@ -9,11 +14,11 @@ ENVSCRIPT=$BUILD_DIR/.profile.d/tesseract-ocr.sh
 
 TESSERACT_OCR_LANGUAGES=eng
 
-echo "Unpacking Tesseract-OCR binaries"
+echo "-----> Unpacking Tesseract-OCR binaries"
 mkdir -p $INSTALL_DIR
-tar -zxvf $TESSERACT_OCR_TGZ -C $INSTALL_DIR
+tar -zxvf $TESSERACT_OCR_TGZ -C $INSTALL_DIR | indent
 
-echo "Building runtime environment for Tesseract-OCR"
+echo "-----> Building runtime environment for Tesseract-OCR"
 mkdir -p $BUILD_DIR/.profile.d
 echo "export PATH=\"$TESSERACT_OCR_DIR/bin:\$PATH\"" > $ENVSCRIPT
 echo "export LD_LIBRARY_PATH=\"$TESSERACT_OCR_DIR/lib:\$LD_LIBRARY_PATH\"" >> $ENVSCRIPT
