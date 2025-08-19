@@ -1,2 +1,13 @@
 #!/bin/sh
-echo "detect"
+if [ -f $1/Gemfile ]; then
+	GEMFILE=$(ls | grep Gemfile)
+	GEMLEN=${#GEMFILE}
+	if [ GEMLEN -ne 0 ]; then
+		echo "RTesseractFramework"
+		exit 0
+	else
+		exit 1
+	fi
+else
+	exit 1
+fi
