@@ -1,8 +1,22 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e            # fail fast
+set -o pipefail   # don't ignore exit codes when piping output
 
 indent() {
   sed -u 's/^/       /'
 }
+
+ENV_DIR=$3
+
+blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
+if [ -d "$ENV_DIR" ]; then
+  for e in $(ls $ENV_DIR); do
+    echo "$e" | grep -qvE "$blacklist_regex" &&
+      export "$e=$(cat $ENV_DIR/$e)"
+    :
+  done
+fi
 
 # This is modified to specifically work with a Ruby Rails app
 # This will almost certainly not work on other apps
@@ -26,4 +40,6 @@ echo "export LD_LIBRARY_PATH=\"$TESSERACT_OCR_DIR/lib:\$LD_LIBRARY_PATH\"" >> $E
 echo "export TESSDATA_PREFIX=\"$TESSERACT_OCR_DIR/share/tessdata\"" >> $ENVSCRIPT
 
 echo "-----> Downloading custom language files"
-MODEL_DIR="$TESSDATA_PREFIX" bin/rails model:download_tesseract_model
+cd $APP_DIR
+mkdir -p $TESSERACT_OCR_DIR/share/tessdata
+MODEL_DIR=$TESSERACT_OCR_DIR/share/tessdata bundle exec rake ml_model:download_tesseract_model | indent
