@@ -26,4 +26,4 @@ echo "export LD_LIBRARY_PATH=\"$TESSERACT_OCR_DIR/lib:\$LD_LIBRARY_PATH\"" >> $E
 echo "export TESSDATA_PREFIX=\"$TESSERACT_OCR_DIR/share/tessdata\"" >> $ENVSCRIPT
 
 echo "-----> Downloading custom language files"
-MODEL_DIR="$TESSDATA_PREFIX" bin/rails model:download_tesseract_model
+MODEL_DIR="$TESSDATA_PREFIX" bundle exec rake ml_model:download_tesseract_model | indent
