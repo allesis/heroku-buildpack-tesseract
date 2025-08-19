@@ -4,6 +4,8 @@ indent() {
   sed -u 's/^/       /'
 }
 
+# This is modified to specifically work with a Ruby Rails app
+# This will almost certainly not work on other apps
 APP_DIR="/app"
 TESSERACT_OCR_VERSION=5.5.1
 TESSERACT_OCR_TGZ=tesseract-ocr-$TESSERACT_OCR_VERSION.tar.gz
@@ -22,3 +24,6 @@ echo "-----> Building runtime environment for Tesseract-OCR"
 echo "export PATH=\"$TESSERACT_OCR_DIR/bin:\$PATH\"" > $ENVSCRIPT
 echo "export LD_LIBRARY_PATH=\"$TESSERACT_OCR_DIR/lib:\$LD_LIBRARY_PATH\"" >> $ENVSCRIPT
 echo "export TESSDATA_PREFIX=\"$TESSERACT_OCR_DIR/share/tessdata\"" >> $ENVSCRIPT
+
+echo "-----> Downloading custom language files"
+MODEL_DIR="$TESSDATA_PREFIX" bin/rails model:download_tesseract_model
