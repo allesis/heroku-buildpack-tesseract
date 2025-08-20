@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
-if [ test -f $1/Gemfile ]; then
-	RTESSERACT_FOUND=$(cat $1/Gemfile | grep rtesseract | wc -l)
-	if [ $RTESSERACT_FOUND -ne 0 ]; then
-		echo "RTesseractFramework"
-		exit 0
-	else
-		exit 1
-	fi
+RTESSERACT_FOUND=$(cat $1/Gemfile | grep rtesseract | wc -l)
+if [ $RTESSERACT_FOUND -ne 0 ]; then
+	echo "RTesseractFramework"
+	exit 0
 else
 	exit 1
 fi
