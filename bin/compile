@@ -43,3 +43,4 @@ echo "-----> Downloading custom language files"
 cd $APP_DIR
 mkdir -p $TESSERACT_OCR_DIR/share/tessdata
 MODEL_DIR=$TESSERACT_OCR_DIR/share/tessdata bundle exec rake ml_model:download_tesseract_model | indent
+
