@@ -30,17 +30,18 @@ fi
 TESSERACT_OCR_VERSION=5.5.1
 TESSERACT_OCR_TGZ=tesseract-ocr-$TESSERACT_OCR_VERSION.tar.gz
 
-TESSDATA_PREFIX=$BUILD_DIR/vendor/tesseract-ocr
+TESS_PREFIX=$BUILD_DIR/vendor/tesseract-ocr/share
+TESSDATA_PREFIX=$TESS_PREFIX/share/tessdata
 ENVSCRIPT=$BUILD_DIR/.profile.d/tesseract-ocr.sh
 
 echo "-----> Unpacking Tesseract-OCR binaries"
-mkdir -p $TESSDATA_PREFIX/tessdata
-tar -zxvf $TESSERACT_OCR_TGZ -C $TESSDATA_PREFIX | indent
+mkdir -p $TESS_PREFIX/tessdata
+tar -zxvf $TESSERACT_OCR_TGZ -C $TESS_PREFIX | indent
 
 echo "-----> Building runtime environment for Tesseract-OCR"
 mkdir -p $BUILD_DIR/.profile.d
-echo "export PATH=\"$TESSDATA_PREFIX/bin:\$PATH\"" > $ENVSCRIPT
-echo "export LD_LIBRARY_PATH=\"$TESSDATA_PREFIX/lib:\$LD_LIBRARY_PATH\"" >> $ENVSCRIPT
+echo "export PATH=\"$TESS_PREFIX/bin:\$PATH\"" > $ENVSCRIPT
+echo "export LD_LIBRARY_PATH=\"$TESS_PREFIX/lib:\$LD_LIBRARY_PATH\"" >> $ENVSCRIPT
 echo "export TESSDATA_PREFIX=\"$TESSDATA_PREFIX\"" >> $ENVSCRIPT
 
 echo "-----> Downloading custom language files"
