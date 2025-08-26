@@ -46,5 +46,5 @@ echo "export TESSDATA_PREFIX=\"$TESSDATA_PREFIX\"" >> $ENVSCRIPT
 
 echo "-----> Downloading custom language files"
 cd $BUILD_DIR
-bundle exec rake ml_model:download_tesseract_model | indent
+TESSDATA_PREFIX=$TESSDATA_PREFIX bundle exec rake ml_model:download_tesseract_model | indent
 
