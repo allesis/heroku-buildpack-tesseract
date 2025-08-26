@@ -30,7 +30,7 @@ fi
 TESSERACT_OCR_VERSION=5.5.1
 TESSERACT_OCR_TGZ=tesseract-ocr-$TESSERACT_OCR_VERSION.tar.gz
 
-TESS_PREFIX=$BUILD_DIR/vendor/tesseract-ocr/share
+TESS_PREFIX=$BUILD_DIR/vendor/tesseract-ocr
 TESSDATA_PREFIX=$TESS_PREFIX/share/tessdata
 ENVSCRIPT=$BUILD_DIR/.profile.d/tesseract-ocr.sh
 
