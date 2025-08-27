@@ -7,7 +7,7 @@ indent() {
   sed -u 's/^/       /'
 }
 
-
+BUILD_DIR=$1
 ENV_DIR=$3
 
 # NOTE: Currently the environment variables which will be exported to the environment
@@ -27,25 +27,27 @@ fi
 
 # This is modified to specifically work with a Ruby Rails app
 # This will almost certainly not work on other apps
-APP_DIR="/app"
 TESSERACT_OCR_VERSION=5.5.1
 TESSERACT_OCR_TGZ=tesseract-ocr-$TESSERACT_OCR_VERSION.tar.gz
 
-TESSERACT_OCR_DIR=$APP_DIR/vendor/tesseract-ocr
-ENVSCRIPT=$APP_DIR/.profile.d/tesseract-ocr.sh
+TESS_PREFIX=$BUILD_DIR/vendor/tesseract-ocr
+TESSDATA_PREFIX=$TESS_PREFIX/share/tessdata
+ENVSCRIPT=$BUILD_DIR/.profile.d/tesseract-ocr.sh
 
 echo "-----> Unpacking Tesseract-OCR binaries"
-mkdir -p $TESSERACT_OCR_DIR
-tar -zxvf $TESSERACT_OCR_TGZ -C $TESSERACT_OCR_DIR | indent
+mkdir -p $TESS_PREFIX/tessdata
+tar -zxvf $TESSERACT_OCR_TGZ -C $TESS_PREFIX | indent
 
 echo "-----> Building runtime environment for Tesseract-OCR"
-#mkdir -p $BUILD_DIR/.profile.d
-echo "export PATH=\"$TESSERACT_OCR_DIR/bin:\$PATH\"" > $ENVSCRIPT
-echo "export LD_LIBRARY_PATH=\"$TESSERACT_OCR_DIR/lib:\$LD_LIBRARY_PATH\"" >> $ENVSCRIPT
-echo "export TESSDATA_PREFIX=\"$TESSERACT_OCR_DIR/share/tessdata\"" >> $ENVSCRIPT
+mkdir -p $BUILD_DIR/.profile.d
+echo "export PATH=\"$TESS_PREFIX/bin:\$PATH\"" > $ENVSCRIPT
+echo "export LD_LIBRARY_PATH=\"$TESS_PREFIX/lib:\$LD_LIBRARY_PATH\"" >> $ENVSCRIPT
+echo "export TESSDATA_PREFIX=\"$TESSDATA_PREFIX\"" >> $ENVSCRIPT
 
 echo "-----> Downloading custom language files"
-mkdir -p $TESSERACT_OCR_DIR/share/tessdata
-cd $APP_DIR
-MODEL_DIR=$TESSERACT_OCR_DIR/share/tessdata bundle exec rake ml_model:download_tesseract_model | indent
+cd $BUILD_DIR
+TASK_EXISTS=$(bundle exec rake --tasks | grep "ml_model:download_tesseract_model" | wc -l)
+if [ $TASK_EXISTS -ne 0 ]; then
+	TESSDATA_PREFIX=$TESSDATA_PREFIX bundle exec rake ml_model:download_tesseract_model | indent
+fi
 
