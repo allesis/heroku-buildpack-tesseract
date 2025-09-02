@@ -30,24 +30,30 @@ fi
 TESSERACT_OCR_VERSION=5.5.1
 TESSERACT_OCR_TGZ=tesseract-ocr-$TESSERACT_OCR_VERSION.tar.gz
 
-TESS_PREFIX=$BUILD_DIR/vendor/tesseract-ocr
-TESSDATA_PREFIX=$TESS_PREFIX/share/tessdata
-ENVSCRIPT=$BUILD_DIR/.profile.d/tesseract-ocr.sh
+TESSERACT_VENDOR_PATH=vendor/tesseract-ocr
+TESSERACT_DATA_PATH=$TESSERACT_VENDOR_PATH/share/tessdata
+
+# Extract the Tesseract-OCR binaries into the build directory under appropriate path
+BUILD_TESSERACT_VENDOR_PATH=$BUILD_DIR/$TESSERACT_VENDOR_PATH
 
 echo "-----> Unpacking Tesseract-OCR binaries"
-mkdir -p $TESS_PREFIX/tessdata
-tar -zxvf $TESSERACT_OCR_TGZ -C $TESS_PREFIX | indent
+mkdir -p $BUILD_TESSERACT_VENDOR_PATH
+tar -zxvf $TESSERACT_OCR_TGZ -C $BUILD_TESSERACT_VENDOR_PATH | indent
+
+# Setup script that will be executed when container starts to set the environment variables
+ENVSCRIPT=$BUILD_DIR/.profile.d/tesseract-ocr.sh
 
 echo "-----> Building runtime environment for Tesseract-OCR"
 mkdir -p $BUILD_DIR/.profile.d
-echo "export PATH=\"$TESS_PREFIX/bin:\$PATH\"" > $ENVSCRIPT
-echo "export LD_LIBRARY_PATH=\"$TESS_PREFIX/lib:\$LD_LIBRARY_PATH\"" >> $ENVSCRIPT
-echo "export TESSDATA_PREFIX=\"$TESSDATA_PREFIX\"" >> $ENVSCRIPT
+echo "export PATH=\"$HOME/$TESSERACT_VENDOR_PATH/bin:\$PATH\"" > $ENVSCRIPT
+echo "export LD_LIBRARY_PATH=\"$HOME/$TESSERACT_VENDOR_PATH/lib:\$LD_LIBRARY_PATH\"" >> $ENVSCRIPT
+echo "export TESSDATA_PREFIX=\"$HOME/$TESSERACT_DATA_PATH\"" >> $ENVSCRIPT
 
+# Download the custom language files into build directory under appropriate path
 echo "-----> Downloading custom language files"
 cd $BUILD_DIR
 TASK_EXISTS=$(bundle exec rake --tasks | grep "ml_model:download_tesseract_model" | wc -l)
-if [ $TASK_EXISTS -ne 0 ]; then
-	TESSDATA_PREFIX=$TESSDATA_PREFIX bundle exec rake ml_model:download_tesseract_model | indent
-fi
 
+if [ $TASK_EXISTS -ne 0 ]; then
+	TESSDATA_PREFIX=$BUILD_DIR/$TESSERACT_DATA_PATH bundle exec rake ml_model:download_tesseract_model | indent
+fi
